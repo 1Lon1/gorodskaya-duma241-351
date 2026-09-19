@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Городская Дума</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Городская Дума</h1>
+        <p>Информационная система городской думы</p>
+    </header>
+
+    <main>
+
+        <!-- Вход -->
+
+        <section id="login-section">
+
+            <h2>Вход</h2>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="Имя пользователя"
+            >
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Пароль"
+            >
+
+            <button onclick="login()">
+                Войти
+            </button>
+
+            <p id="login-message"></p>
+
+        </section>
+
+
+        <!-- Основное приложение -->
+
+        <section id="app-section" style="display: none;">
+
+            <!-- Депутаты -->
+
+            <h2>Депутаты</h2>
+
+            <button onclick="loadDeputies()">
+                Обновить список
+            </button>
+
+            <div id="deputies-list"></div>
+
+
+            <h2>Добавить депутата</h2>
+
+            <input
+                type="text"
+                id="full-name"
+                placeholder="ФИО"
+            >
+
+            <input
+                type="text"
+                id="party"
+                placeholder="Партия"
+            >
+
+            <input
+                type="text"
+                id="district"
+                placeholder="Округ"
+            >
+
+            <button onclick="createDeputy()">
+                Добавить депутата
+            </button>
+
+            <p id="deputy-message"></p>
+
+
+            <!-- Комиссии -->
+
+            <h2>Комиссии</h2>
+
+            <button onclick="loadCommissions()">
+                Обновить список
+            </button>
+
+            <div id="commissions-list"></div>
+
+
+            <h2>Добавить комиссию</h2>
+
+            <input
+                type="text"
+                id="commission-name"
+                placeholder="Название комиссии"
+            >
+
+            <input
+                type="text"
+                id="commission-description"
+                placeholder="Описание"
+            >
+
+            <select id="commission-chairman">
+                <option value="">Председатель не выбран</option>
+            </select>
+
+            <button onclick="createCommission()">
+                Добавить комиссию
+            </button>
+
+            <p id="commission-message"></p>
+<!-- Заседания -->
+
+<h2>Заседания</h2>
+
+<button onclick="loadMeetings()">
+    Обновить список
+</button>
+
+<div id="meetings-list"></div>
+
+
+<h2>Добавить заседание</h2>
+
+<select id="meeting-commission">
+    <option value="">Выберите комиссию</option>
+</select>
+
+<input
+    type="text"
+    id="meeting-title"
+    placeholder="Название заседания"
+>
+
+<input
+    type="date"
+    id="meeting-date"
+>
+
+<input
+    type="text"
+    id="meeting-location"
+    placeholder="Место проведения"
+>
+
+<button onclick="createMeeting()">
+    Добавить заседание
+</button>
+
+<p id="meeting-message"></p>
+            <!-- Посещаемость -->
+
+<h2>Посещаемость заседания</h2>
+
+<select id="attendance-meeting">
+    <option value="">Выберите заседание</option>
+</select>
+
+<button onclick="loadAttendance()">
+    Показать посещаемость
+</button>
+
+<div id="attendance-list"></div>
+
+
+<h2>Добавить посещаемость</h2>
+
+<select id="attendance-deputy">
+    <option value="">Выберите депутата</option>
+</select>
+
+<select id="attendance-status">
+    <option value="present">Присутствовал</option>
+    <option value="absent">Отсутствовал</option>
+</select>
+
+<button onclick="createAttendance()">
+    Добавить запись
+</button>
+
+<p id="attendance-message"></p>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
+

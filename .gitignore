@@ -1,0 +1,11 @@
+```text
+.venv/
+.idea/
+__pycache__/
+*.pyc
+
+backend/__pycache__/
+backend/duma.db
+
+.env
+```
