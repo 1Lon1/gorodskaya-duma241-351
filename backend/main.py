@@ -27,7 +27,7 @@ Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI(
-    title="Городская Дума — API",
+    title="Городская Дума",
     version="0.1.0"
 )
 app.add_middleware(
