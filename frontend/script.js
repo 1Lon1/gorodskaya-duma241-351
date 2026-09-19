@@ -40,32 +40,49 @@ async function login() {
 
 async function loadDeputies() {
     const response = await fetch(`${API_URL}/api/deputies`);
-
     const deputies = await response.json();
 
     const list = document.getElementById("deputies-list");
-
     list.innerHTML = "";
 
     deputies.forEach(deputy => {
-        const element = document.createElement("div");
+        const item = document.createElement("div");
 
-        element.className = "deputy";
-
-        element.innerHTML = `
-            <strong>${deputy.full_name}</strong>
-            <br>
-            Партия: ${deputy.party || "Не указана"}
-            <br>
-            Округ: ${deputy.district || "Не указан"}
+        item.innerHTML = `
+            <span>
+                ${deputy.id}. ${deputy.full_name}
+                — ${deputy.party || ""}
+                — ${deputy.district || ""}
+            </span>
+            <button onclick="deleteDeputy(${deputy.id})">
+                Удалить
+            </button>
         `;
 
-        list.appendChild(element);
+        list.appendChild(item);
     });
-
-    loadChairmanOptions(deputies);
 }
+async function deleteDeputy(deputyId) {
+    const response = await fetch(
+        `${API_URL}/api/deputies/${deputyId}`,
+        {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        }
+    );
 
+    const data = await response.json();
+
+    if (!response.ok) {
+        alert(data.detail || "Ошибка удаления");
+        return;
+    }
+
+    alert(data.message);
+    loadDeputies();
+}
 
 async function createDeputy() {
     const fullName = document.getElementById("full-name").value;
