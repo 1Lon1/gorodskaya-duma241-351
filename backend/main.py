@@ -127,6 +127,28 @@ def get_deputy(
 
 
     return deputy
+@app.delete("/api/deputies/{deputy_id}")
+def delete_deputy(
+    deputy_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    deputy = db.query(Deputy).filter(
+        Deputy.id == deputy_id
+    ).first()
+
+    if deputy is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Депутат не найден"
+        )
+
+    db.delete(deputy)
+    db.commit()
+
+    return {
+        "message": "Депутат удалён"
+    }
 @app.post("/api/commissions", response_model=CommissionResponse)
 def create_commission(
     commission: CommissionCreate,
