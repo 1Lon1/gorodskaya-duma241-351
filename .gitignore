@@ -1,11 +1,25 @@
-```text
+# Python
 .venv/
-.idea/
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
 
-backend/__pycache__/
-backend/duma.db
+# IDE
+.idea/
 
+# Environment and secrets
 .env
-```
+.env.*
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Backups and restore tests
+backups/
+restore_test/
+
+# Generated files
+*.log

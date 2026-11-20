@@ -1,26 +1,32 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from auth import hash_password, verify_password, create_access_token
-from models import User
-from schemas import UserRegister, UserLogin, Token
-from database import Base, engine, get_db
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import JWTError, jwt
-
-from auth import SECRET_KEY, ALGORITHM
 import models
-from models import Deputy, Commission
+from auth import (
+    ALGORITHM,
+    SECRET_KEY,
+    create_access_token,
+    hash_password,
+    verify_password,
+)
+from database import Base, engine, get_db
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import JWTError, jwt
+from models import Commission, Deputy, User
 from schemas import (
-    DeputyCreate,
-    DeputyResponse,
+    AttendanceCreate,
+    AttendanceResponse,
     CommissionCreate,
     CommissionResponse,
+    DeputyCreate,
+    DeputyResponse,
     MeetingCreate,
     MeetingResponse,
-    AttendanceCreate,
-    AttendanceResponse
+    Token,
+    UserLogin,
+    UserRegister,
 )
+from sqlalchemy.orm import Session
+
 security = HTTPBearer()
 
 Base.metadata.create_all(bind=engine)
@@ -58,11 +64,11 @@ def get_current_user(
                 detail="Недействительный токен"
             )
 
-    except JWTError:
+    except JWTError as err:
         raise HTTPException(
             status_code=401,
             detail="Недействительный токен"
-        )
+        ) from err
 
     user = db.query(User).filter(
         User.username == username
