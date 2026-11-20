@@ -10,8 +10,8 @@ migrate:
 	DATABASE_URL=sqlite:///./ci_migration.db alembic upgrade head
 
 migration-check:
+	DATABASE_URL=sqlite:///./ci_migration.db alembic upgrade head
 	DATABASE_URL=sqlite:///./ci_migration.db alembic check
-
 backup:
 	python scripts/backup_db.py
 

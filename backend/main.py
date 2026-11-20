@@ -1,3 +1,4 @@
+import jwt
 import models
 from auth import (
     ALGORITHM,
@@ -10,7 +11,6 @@ from database import Base, engine, get_db
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
 from models import Commission, Deputy, User
 from schemas import (
     AttendanceCreate,
@@ -64,7 +64,7 @@ def get_current_user(
                 detail="Недействительный токен"
             )
 
-    except JWTError as err:
+    except jwt.InvalidTokenError as err:
         raise HTTPException(
             status_code=401,
             detail="Недействительный токен"
