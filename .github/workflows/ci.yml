@@ -79,7 +79,13 @@ jobs:
           DOCKER_TLS_CERTDIR: ""
         ports:
           - 2375:2375
-        options: --privileged
+        options: >-
+          --privileged
+          --health-cmd "docker info"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+          --health-start-period 10s
 
     env:
       DOCKER_HOST: tcp://127.0.0.1:2375
