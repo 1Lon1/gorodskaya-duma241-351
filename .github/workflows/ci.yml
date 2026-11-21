@@ -148,5 +148,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/1lon1/gorodskaya-duma241-351:${{ github.sha }}
+            ghcr.io/1lon1/gorodskaya-duma241-351:latest
