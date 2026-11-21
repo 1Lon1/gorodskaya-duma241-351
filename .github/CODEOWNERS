@@ -1,0 +1,11 @@
+# Критические компоненты CI/CD и тестирования
+/tests/ @1Lon1
+/Makefile @1Lon1
+/pyproject.toml @1Lon1
+/.github/workflows/ @1Lon1
+/.github/CODEOWNERS @1Lon1
+/Dockerfile.ci @1Lon1
+/Dockerfile.ci.dockerignore @1Lon1
+/requirements-dev.txt @1Lon1
+/backend/requirements.txt @1Lon1
+/scripts/ @1Lon1
