@@ -97,17 +97,18 @@ if [[ $image != "$current_image" ]]; then
         "$current_revision" "$current_image" > "$state"
 fi
 
-if ! apply_release "$revision" "$image" ||
-    { [[ -n $state ]] && ! mv -f -- "$state" .releases; }; then
-    echo "Release verification failed for $revision" >&2
-    if [[ -n $current_image ]]; then
-        apply_release "$current_revision" "$current_image" ||
-            fail "Recovery failed. Inspect staging before retrying."
-        echo "Restored accepted release $current_revision"
-    else
-        compose "$image" stop app || fail "Could not stop the failed first release"
-    fi
-    exit 1
+if apply_release "$revision" "$image" &&
+    { [[ -z $state ]] || mv -f -- "$state" .releases; }; then
+    echo "Accepted release $revision ($image)"
+    exit 0
 fi
 
-echo "Accepted release $revision ($image)"
+echo "Release verification failed for $revision" >&2
+if [[ -n $current_image ]]; then
+    apply_release "$current_revision" "$current_image" ||
+        fail "Recovery failed. Inspect staging before retrying."
+    echo "Restored accepted release $current_revision"
+else
+    compose "$image" stop app || fail "Could not stop the failed first release"
+fi
+exit 1
