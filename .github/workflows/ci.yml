@@ -113,7 +113,7 @@ jobs:
         id: app-build
         continue-on-error: true
         run: |
-          docker build -t lab5-api:${{ github.sha }} .
+          docker build --build-arg APP_REVISION=${{ github.sha }} -t lab5-api:${{ github.sha }} .
           docker save lab5-api:${{ github.sha }} -o lab5-api.tar
 
       - name: Scan application image with Trivy inside DinD
@@ -212,6 +212,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          build-args: APP_REVISION=${{ github.sha }}
           push: true
           tags: |
             ghcr.io/1lon1/gorodskaya-duma241-351:${{ github.sha }}

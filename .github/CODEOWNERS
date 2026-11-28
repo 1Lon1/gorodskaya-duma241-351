@@ -9,3 +9,5 @@
 /requirements-dev.txt @1Lon1
 /backend/requirements.txt @1Lon1
 /scripts/ @1Lon1
+/deploy/staging/ @1Lon1
+/Dockerfile @1Lon1

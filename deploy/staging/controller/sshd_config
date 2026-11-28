@@ -1,0 +1,10 @@
+Port 12226
+ListenAddress 127.0.0.1
+HostKey /home/duma-deploy/duma-staging/ssh/host_ed25519
+AuthorizedKeysFile /home/duma-deploy/duma-staging/ssh/authorized_keys
+AllowUsers duma-deploy
+AuthenticationMethods publickey
+UsePAM no
+DisableForwarding yes
+PermitTTY no
+ForceCommand /home/duma-deploy/duma-staging/ssh-command.sh

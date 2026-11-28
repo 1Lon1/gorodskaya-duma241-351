@@ -22,6 +22,10 @@ COPY backend/ ./backend/
 
 WORKDIR /app/backend
 
+ARG APP_REVISION=dev
+ENV APP_REVISION=$APP_REVISION
+LABEL org.opencontainers.image.revision=$APP_REVISION
+
 EXPOSE 8000
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
