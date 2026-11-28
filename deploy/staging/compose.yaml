@@ -1,0 +1,24 @@
+services:
+  app:
+    image: ${RELEASE_IMAGE:?RELEASE_IMAGE is required}
+    environment:
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
+      DATABASE_URL: sqlite:////data/duma.db
+    ports:
+      - '127.0.0.1:18080:8000'
+    volumes:
+      - data:/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import json, urllib.request; assert json.load(urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2))['status'] == 'ok'"
+      interval: 3s
+      timeout: 3s
+      retries: 6
+      start_period: 5s
+    restart: unless-stopped
+
+volumes:
+  data:

@@ -5,7 +5,9 @@ __pycache__/
 .ruff_cache/
 .git/
 .env
+.env.*
 *.db
 backups/
 restore_test/
 tests/
+deploy/staging/

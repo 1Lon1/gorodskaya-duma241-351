@@ -1,0 +1,95 @@
+name: Lab6 CD Staging
+
+on:
+  workflow_run:
+    workflows: [Lab5 CI Pipeline]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Staging operation
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+      revision:
+        description: Full commit SHA published to GHCR (deploy only)
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: duma-lab6-staging
+  cancel-in-progress: false
+
+jobs:
+  staging:
+    name: Deploy and verify staging
+    if: >-
+      (github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'workflow_dispatch')) ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+    steps:
+      - name: Confirm the requested release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          CI_REVISION: ${{ github.event.workflow_run.head_sha }}
+          OPERATION: ${{ inputs.operation }}
+          MANUAL_REVISION: ${{ inputs.revision }}
+        run: |
+          if [[ "$EVENT" == workflow_run ]]; then
+            OPERATION=deploy
+            MANUAL_REVISION="$CI_REVISION"
+            main_revision=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq '.object.sha')
+            if [[ "$MANUAL_REVISION" != "$main_revision" ]]; then
+              echo "Skipping superseded main revision $MANUAL_REVISION"
+              exit 0
+            fi
+          fi
+          case "$OPERATION" in
+            deploy)
+              [[ "$MANUAL_REVISION" =~ ^[0-9a-f]{40}$ ]] || {
+                echo "::error::Provide the full published commit SHA"
+                exit 1
+              }
+              echo "command=deploy $MANUAL_REVISION" >> "$GITHUB_OUTPUT"
+              ;;
+            rollback)
+              echo 'command=rollback' >> "$GITHUB_OUTPUT"
+              ;;
+            *) exit 1 ;;
+          esac
+
+      - name: Run release on the target and wait for verification
+        if: steps.release.outputs.command != ''
+        env:
+          HOST: ${{ vars.STAGING_SSH_HOST }}
+          PORT: ${{ vars.STAGING_SSH_PORT }}
+          HOST_KEY: ${{ vars.STAGING_SSH_HOST_KEY }}
+          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          RELEASE_COMMAND: ${{ steps.release.outputs.command }}
+        run: |
+          PORT="${PORT:-22}"
+          [[ "$HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9.-]*$ &&
+             "$PORT" =~ ^[0-9]{1,5}$ && -n "$HOST_KEY" && -n "$SSH_KEY" ]] || {
+            echo "::error::Configure the SSH host, host key and private key in the staging environment"
+            exit 1
+          }
+          umask 077
+          ssh_dir=$(mktemp -d)
+          trap 'rm -rf -- "$ssh_dir"' EXIT
+          printf '%s\n' "$SSH_KEY" > "$ssh_dir/key"
+          printf '%s\n' "$HOST_KEY" > "$ssh_dir/known_hosts"
+          ssh -n -F /dev/null -i "$ssh_dir/key" -p "$PORT" \
+            -o BatchMode=yes -o ConnectTimeout=10 -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$ssh_dir/known_hosts" \
+            "duma-deploy@$HOST" "$RELEASE_COMMAND"

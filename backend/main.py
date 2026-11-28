@@ -1,3 +1,5 @@
+import os
+
 import jwt
 import models
 from auth import (
@@ -88,6 +90,11 @@ def health_check():
         "status": "ok",
         "message": "Сервер работает"
     }
+
+
+@app.get("/version")
+def running_version():
+    return {"version": app.version, "revision": os.getenv("APP_REVISION", "dev")}
 
 
 @app.post("/api/deputies", response_model=DeputyResponse)
