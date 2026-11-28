@@ -15,8 +15,10 @@ valid_revision() {
 }
 
 compose() {
-    RELEASE_IMAGE="$1" docker compose --project-name duma-lab6-staging \
-        --env-file .env -f compose.yaml "${:2}"
+    local image=$1
+    shift
+    RELEASE_IMAGE="$image" docker compose --project-name duma-lab6-staging \
+        --env-file .env -f compose.yaml "$@"
 }
 
 apply_release() {

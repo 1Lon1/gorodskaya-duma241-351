@@ -16,10 +16,9 @@ def request(path, *, method="GET", payload=None, token=None):
     if token is not None:
         headers["Authorization"] = f"Bearer {token}"
     data = json.dumps(payload).encode() if payload is not None else None
+    http_request = Request(BASE_URL + path, method=method, data=data, headers=headers)
     try:
-        with urlopen(
-            Request(BASE_URL + path, method=method, data=data, headers=headers), timeout=5
-        ) as response:
+        with urlopen(http_request, timeout=5) as response:
             return json.load(response)
     except HTTPError as exc:
         raise RuntimeError(f"{method} {path} returned HTTP {exc.code}") from exc

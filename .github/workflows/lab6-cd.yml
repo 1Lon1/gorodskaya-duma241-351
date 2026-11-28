@@ -89,7 +89,7 @@ jobs:
           trap 'rm -rf -- "$ssh_dir"' EXIT
           printf '%s\n' "$SSH_KEY" > "$ssh_dir/key"
           printf '%s\n' "$HOST_KEY" > "$ssh_dir/known_hosts"
-          ssh -F /dev/null -i "$ssh_dir/key" -p "$PORT" \
+          ssh -n -F /dev/null -i "$ssh_dir/key" -p "$PORT" \
             -o BatchMode=yes -o ConnectTimeout=10 -o IdentitiesOnly=yes \
             -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$ssh_dir/known_hosts" \
             "duma-deploy@$HOST" "$RELEASE_COMMAND"
